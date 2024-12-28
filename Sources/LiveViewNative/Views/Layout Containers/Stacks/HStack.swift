@@ -10,7 +10,7 @@ import SwiftUI
 /// Container that lays out its children in a horizontal line.
 ///
 /// ```html
-/// <HStack>
+/// <HStack alignment="top">
 ///     <Text>Leading</Text>
 ///     <Spacer />
 ///     <Text>Trailing</Text>
