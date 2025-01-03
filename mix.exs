@@ -56,9 +56,11 @@ defmodule LiveViewNative.SwiftUI.MixProject do
       {:floki, ">= 0.30.0", only: :test},
       {:live_view_native, "~> 0.4.0-rc.0"},
       {:live_view_native_stylesheet, "~> 0.3.2", only: :test},
-      {:live_view_native_live_form, github: "liveview-native/liveview-native-live-form", only: :test},
+      {:live_view_native_live_form,
+       github: "liveview-native/liveview-native-live-form", only: :test},
       {:gettext, "~> 0.20", only: :test},
-      {:live_view_native_test_endpoint, github: "liveview-native/live_view_native_test_endpoint", branch: "main", only: :test},
+      {:live_view_native_test_endpoint,
+       github: "liveview-native/live_view_native_test_endpoint", branch: "main", only: :test},
       {:nimble_parsec, "~> 1.3"}
     ]
   end
@@ -114,14 +116,14 @@ defmodule LiveViewNative.SwiftUI.MixProject do
     generated_docs = Path.wildcard("generated_docs/**/*.{md,cheatmd}")
 
     livebooks =
-        [
-          "livebooks/markdown/getting-started.md",
-          "livebooks/markdown/swiftui-views.md",
-          "livebooks/markdown/interactive-swiftui-views.md",
-          "livebooks/markdown/stylesheets.md",
-          "livebooks/markdown/native-navigation.md",
-          "livebooks/markdown/forms-and-validation.md"
-        ]
+      [
+        "livebooks/markdown/getting-started.md",
+        "livebooks/markdown/swiftui-views.md",
+        "livebooks/markdown/interactive-swiftui-views.md",
+        "livebooks/markdown/stylesheets.md",
+        "livebooks/markdown/native-navigation.md",
+        "livebooks/markdown/forms-and-validation.md"
+      ]
 
     ["README.md", "guides/syntax_conversion.cheatmd"] ++ guides ++ generated_docs ++ livebooks
   end
@@ -154,7 +156,12 @@ defmodule LiveViewNative.SwiftUI.MixProject do
   defp various_docs(args) do
     {opts, _, _} =
       OptionParser.parse(args,
-        strict: [skip_gen_docs: :boolean, skip_livebooks: :boolean, doc_path: :string, no_generate_docc: :boolean]
+        strict: [
+          skip_gen_docs: :boolean,
+          skip_livebooks: :boolean,
+          doc_path: :string,
+          no_generate_docc: :boolean
+        ]
       )
 
     unless opts[:skip_gen_docs], do: Mix.Task.run("lvn.swiftui.gen.docs", args)

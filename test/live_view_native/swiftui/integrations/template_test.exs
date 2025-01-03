@@ -18,7 +18,8 @@ defmodule LiveViewNative.SwiftUI.TemplateRenderTest do
   end
 
   test "can render the override swiftui format with watchos target", %{conn: conn} do
-    {:ok, lv, _body} = live(conn, "/template", _format: :swiftui, _interface: %{"target" => "watchos"})
+    {:ok, lv, _body} =
+      live(conn, "/template", _format: :swiftui, _interface: %{"target" => "watchos"})
 
     assert lv |> element("Text") |> render() =~ "WatchOS Target Template SwiftUI Render 100"
   end

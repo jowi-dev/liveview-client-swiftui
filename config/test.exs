@@ -5,13 +5,15 @@ config :live_view_native_stylesheet, :parsers, swiftui: LiveViewNative.SwiftUI.R
 config :live_view_native_stylesheet,
   annotations: false
 
-config :phoenix_template, format_encoders: [
-  swiftui: Phoenix.HTML.Engine
-]
+config :phoenix_template,
+  format_encoders: [
+    swiftui: Phoenix.HTML.Engine
+  ]
 
-config :phoenix, template_engines: [
-  neex: LiveViewNative.Engine
-]
+config :phoenix,
+  template_engines: [
+    neex: LiveViewNative.Engine
+  ]
 
 config :mime, :types, %{
   "text/swiftui" => ["swiftui"]
@@ -31,7 +33,6 @@ config :live_view_native_stylesheet,
   content: [
     swiftui: [
       "test/**/*.*"
-
     ]
   ],
   output: "priv/static/assets"

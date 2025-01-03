@@ -4,5 +4,5 @@ defmodule LiveViewNativeTest.SwiftUI.Layouts.SwiftUI do
 
   import Phoenix.Controller, only: [get_csrf_token: 0]
 
-  embed_templates "layouts_swiftui/*"
+  embed_templates("layouts_swiftui/*")
 end

@@ -31,7 +31,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Setup.Gen do
   @doc false
   def run_generators(context) do
     generators(context)
-    |> Enum.each(fn({task, args}) -> Mix.Task.run(task, args) end)
+    |> Enum.each(fn {task, args} -> Mix.Task.run(task, args) end)
 
     context
   end
@@ -42,13 +42,15 @@ defmodule Mix.Tasks.Lvn.Swiftui.Setup.Gen do
   end
 
   @doc false
-  def switches, do: [
-    context_app: :string,
-    web: :string
-  ]
+  def switches,
+    do: [
+      context_app: :string,
+      web: :string
+    ]
 
   @doc false
   def validate_args!([]), do: [nil]
+
   def validate_args!(_args) do
     Mix.raise("""
     mix lvn.swiftui.setup.gen does not take any arguments, only the following switches:

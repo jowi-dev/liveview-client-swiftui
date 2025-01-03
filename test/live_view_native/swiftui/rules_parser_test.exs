@@ -18,7 +18,10 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
       {line, input} = {__ENV__.line, "\nbold(true)"}
 
       # We add 1 because the modifier is on the second line of the input
-      output = {:bold, [file: __ENV__.file, line: line + 1, module: __ENV__.module, source: "bold(true)"], [true]}
+      output =
+        {:bold,
+         [file: __ENV__.file, line: line + 1, module: __ENV__.module, source: "bold(true)"],
+         [true]}
 
       assert parse(input,
                file: __ENV__.file,
@@ -27,27 +30,39 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
                annotations: true
              ) ==
                output
-      end
+    end
 
-      test "parses modifier function definition with annotation (2)" do
-      {line, input} = {__ENV__.line,"""
-      font(.largeTitle)
-      bold(true)
-      italic(true)
-      """}
+    test "parses modifier function definition with annotation (2)" do
+      {line, input} =
+        {__ENV__.line,
+         """
+         font(.largeTitle)
+         bold(true)
+         italic(true)
+         """}
 
       output = [
-        {:font, [file: __ENV__.file, line: line, module: __ENV__.module, source: "font(.largeTitle)"], [{:., [file: __ENV__.file, line: line, module: __ENV__.module, source: "font(.largeTitle)"], [nil, :largeTitle]}]},
-        {:bold, [file: __ENV__.file, line: line + 1, module: __ENV__.module, source: "bold(true)"], [true]},
-        {:italic, [file: __ENV__.file, line: line + 2, module: __ENV__.module, source: "italic(true)"], [true]}
+        {:font,
+         [file: __ENV__.file, line: line, module: __ENV__.module, source: "font(.largeTitle)"],
+         [
+           {:.,
+            [file: __ENV__.file, line: line, module: __ENV__.module, source: "font(.largeTitle)"],
+            [nil, :largeTitle]}
+         ]},
+        {:bold,
+         [file: __ENV__.file, line: line + 1, module: __ENV__.module, source: "bold(true)"],
+         [true]},
+        {:italic,
+         [file: __ENV__.file, line: line + 2, module: __ENV__.module, source: "italic(true)"],
+         [true]}
       ]
 
       assert parse(input,
-          file: __ENV__.file,
-          module: __ENV__.module,
-          line: line,
-          annotations: true
-        ) == output
+               file: __ENV__.file,
+               module: __ENV__.module,
+               line: line,
+               annotations: true
+             ) == output
     end
 
     test "parses modifier function definition" do
@@ -121,10 +136,19 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
 
       assert parse(input) == output
 
-      input = "foregroundStyle(Color(.displayP3, red: 0.4627, green: 0.8392, blue: 1.0).opacity(0.25))"
+      input =
+        "foregroundStyle(Color(.displayP3, red: 0.4627, green: 0.8392, blue: 1.0).opacity(0.25))"
 
       output =
-        {:foregroundStyle, [], [{:., [], [{:Color, [], [{:., [], [nil, :displayP3]}, [red: 0.4627, green: 0.8392, blue: 1.0]]}, {:opacity, [], [0.25]}]}]}
+        {:foregroundStyle, [],
+         [
+           {:., [],
+            [
+              {:Color, [],
+               [{:., [], [nil, :displayP3]}, [red: 0.4627, green: 0.8392, blue: 1.0]]},
+              {:opacity, [], [0.25]}
+            ]}
+         ]}
 
       assert parse(input) == output
     end
@@ -362,7 +386,9 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
   describe "helper functions" do
     test "event" do
       input = ~s{searchable(change: event("search-event", throttle: 10_000))}
-      output = {:searchable, [], [[change: {:__event__, [], ["search-event", [throttle: 10_000]]}]]}
+
+      output =
+        {:searchable, [], [[change: {:__event__, [], ["search-event", [throttle: 10_000]]}]]}
 
       assert parse(input) == output
     end
@@ -376,12 +402,27 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
 
     test "gesture" do
       input = ~s{offset(x: gesture_state(:drag, .translation.width))}
-      output = {:offset, [], [[x: {:__gesture_state__, [], [:drag, {:., [], [nil, {:., [], [:translation, :width]}]}]}]]}
+
+      output =
+        {:offset, [],
+         [
+           [
+             x:
+               {:__gesture_state__, [],
+                [:drag, {:., [], [nil, {:., [], [:translation, :width]}]}]}
+           ]
+         ]}
 
       assert parse(input) == output
 
       _input = ~s{rotationEffect(gesture_state(:rotate, .rotation, defaultValue: .zero))}
-      _output = {:rotationEffect, [], [{:__gesture_state__, [], [:rotate, {:., [], [nil, :rotation]}, [defaultValue: {:., [], [nil, :zero]}]]}]}
+
+      _output =
+        {:rotationEffect, [],
+         [
+           {:__gesture_state__, [],
+            [:rotate, {:., [], [nil, :rotation]}, [defaultValue: {:., [], [nil, :zero]}]]}
+         ]}
     end
   end
 
@@ -389,25 +430,31 @@ defmodule LiveViewNative.SwiftUI.RulesParserTest do
     test "ensure the swiftui sheet compiles as expected" do
       output = MockSheet.compile_ast(["color-red"])
 
-      assert output == %{"color-red" => [
-        {:color, [], [{:., [], [nil, :red]}]}
-      ]}
+      assert output == %{
+               "color-red" => [
+                 {:color, [], [{:., [], [nil, :red]}]}
+               ]
+             }
     end
 
     test "ensure ime interpolation doesn't double print ast node" do
       output = MockSheet.compile_ast(["button-plain"])
 
-      assert output == %{"button-plain" => [
-        {:buttonStyle, [], [{:., [], [nil, :plain]}]}
-      ]}
+      assert output == %{
+               "button-plain" => [
+                 {:buttonStyle, [], [{:., [], [nil, :plain]}]}
+               ]
+             }
     end
 
     test "can compile custom classes using the RULES sigil" do
       output = MockSheet.compile_ast(["color-blue"])
 
-      assert output == %{"color-blue" => [
-        {:color, [], [{:., [], [nil, :blue]}]}
-      ]}
+      assert output == %{
+               "color-blue" => [
+                 {:color, [], [{:., [], [nil, :blue]}]}
+               ]
+             }
     end
   end
 

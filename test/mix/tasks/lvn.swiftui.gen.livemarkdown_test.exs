@@ -60,8 +60,10 @@ defmodule Mix.Tasks.Lvn.Swiftui.LivemarkdownTest do
     )
     ```
     """
+
     result = Livemarkdown.make_ex_doc_friendly(content, "filename.livemd")
     refute result =~ "Mix.install"
+
     assert result =~
              "[![Run in Livebook](https://livebook.dev/badge/v1/black.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fliveview-native%2Fliveview-client-swiftui%2Fblob%2Fmain%2Flivebooks%2Ffilename.livemd)"
   end
@@ -106,7 +108,6 @@ defmodule Mix.Tasks.Lvn.Swiftui.LivemarkdownTest do
            """
   end
 
-
   test "make_ex_doc_friendly/1 convert details sections" do
     content = """
     <details style="background-color: lightgreen; padding: 1rem; margin: 1rem 0;">
@@ -118,15 +119,17 @@ defmodule Mix.Tasks.Lvn.Swiftui.LivemarkdownTest do
     * **Language:** Determines which language Xcode should use for the project. Select `Swift`.
     </details>
     """
+
     result = Livemarkdown.make_ex_doc_friendly(content, "filename.livemd")
     refute result =~ "details"
-    assert result =~ """
-            ### What do these options mean?
 
-            * **Product Name:** The name of the application. This can be any valid name. We've chosen `Guides`.
-            * **Organization Identifier:** A reverse DNS string that uniquely identifies your organization. If you don't have a company identifier, [Apple recomends](https://developer.apple.com/documentation/xcode/creating-an-xcode-project-for-an-app) using `com.example.your_name` where `your_name` is your organization or personal name.
-            * **Interface:**: Xcode generates an interface file that includes all your source code's internal and public declarations when using the Assistant editor, the Related Items, or the Navigate menu. Select `SwiftUI` since we're building a SwiftUI application.
-            * **Language:** Determines which language Xcode should use for the project. Select `Swift`.
-            """
+    assert result =~ """
+           ### What do these options mean?
+
+           * **Product Name:** The name of the application. This can be any valid name. We've chosen `Guides`.
+           * **Organization Identifier:** A reverse DNS string that uniquely identifies your organization. If you don't have a company identifier, [Apple recomends](https://developer.apple.com/documentation/xcode/creating-an-xcode-project-for-an-app) using `com.example.your_name` where `your_name` is your organization or personal name.
+           * **Interface:**: Xcode generates an interface file that includes all your source code's internal and public declarations when using the Assistant editor, the Related Items, or the Navigate menu. Select `SwiftUI` since we're building a SwiftUI application.
+           * **Language:** Determines which language Xcode should use for the project. Select `Swift`.
+           """
   end
 end

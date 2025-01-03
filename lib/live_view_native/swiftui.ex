@@ -18,7 +18,7 @@ defmodule LiveViewNative.SwiftUI do
   defp normalize_version(version) do
     version
     |> String.split(".")
-    |> Enum.map(fn(number) ->
+    |> Enum.map(fn number ->
       {number, _rem} = Integer.parse(number)
       number
     end)

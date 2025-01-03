@@ -278,15 +278,17 @@ defmodule LiveViewNative.SwiftUI.Component do
   """
   @doc type: :component
 
-  attr :upload, Phoenix.LiveView.UploadConfig,
+  attr(:upload, Phoenix.LiveView.UploadConfig,
     required: true,
     doc: "The `Phoenix.LiveView.UploadConfig` struct"
+  )
 
-  attr :accept, :string,
+  attr(:accept, :string,
     doc:
       "the optional override for the accept attribute. Defaults to :accept specified by allow_upload"
+  )
 
-  attr :rest, :global, include: ~w(webkitdirectory required disabled capture form)
+  attr(:rest, :global, include: ~w(webkitdirectory required disabled capture form))
 
   def live_file_input(%{upload: upload} = assigns) do
     assigns = assign_new(assigns, :accept, fn -> upload.accept != :any && upload.accept end)
@@ -338,16 +340,18 @@ defmodule LiveViewNative.SwiftUI.Component do
   """
   @doc type: :component
 
-  attr :entry, Phoenix.LiveView.UploadEntry,
+  attr(:entry, Phoenix.LiveView.UploadEntry,
     required: true,
     doc: "The `Phoenix.LiveView.UploadEntry` struct"
+  )
 
-  attr :id, :string,
+  attr(:id, :string,
     default: nil,
     doc:
       "the id of the img tag. Derived by default from the entry ref, but can be overridden as needed if you need to render a preview of the same entry multiple times on the same page"
+  )
 
-  attr :rest, :global, []
+  attr(:rest, :global, [])
 
   def live_img_preview(assigns) do
     ~LVN"""

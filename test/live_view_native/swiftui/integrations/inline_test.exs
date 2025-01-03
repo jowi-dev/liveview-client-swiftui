@@ -18,7 +18,8 @@ defmodule LiveViewNative.SwiftUI.InlineRenderTest do
   end
 
   test "can render the swiftui format with watchos target", %{conn: conn} do
-    {:ok, lv, _body} = live(conn, "/inline", _format: :swiftui, _interface: %{"target" => "watchos"})
+    {:ok, lv, _body} =
+      live(conn, "/inline", _format: :swiftui, _interface: %{"target" => "watchos"})
 
     assert lv |> element("Text") |> render() =~ "WatchOS Target Inline SwiftUI Render 100"
   end

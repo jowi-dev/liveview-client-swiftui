@@ -2,10 +2,10 @@ defmodule LiveViewNativeTest.SwiftUI.TestClient do
   @moduledoc false
 
   defstruct tags: %{
-    form: "LiveForm",
-    button: "Button",
-    upload_input: "VStack",
-    changeables: ~w(
+              form: "LiveForm",
+              button: "Button",
+              upload_input: "VStack",
+              changeables: ~w(
       ColorPicker
       DatePicker
       Picker
@@ -17,5 +17,5 @@ defmodule LiveViewNativeTest.SwiftUI.TestClient do
       TextField
       Toggle
     )
-  }
+            }
 end

@@ -16,6 +16,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
   * `--no-live-form` - don't include `LiveViewNative.LiveForm` in the generated templates
   * `--no-xcodegen` - don't generate the swiftui project
   * `--no-copy` - don't copy files into your Phoenix project
+  * `--no-notify` - don't generate assets required for sending push notifications
   """
 
   def run(args) do
@@ -40,15 +41,18 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     :ok
   end
 
-  def switches, do: [
-    context_app: :string,
-    web: :string,
-    live_form: :boolean,
-    xcodegen: :boolean,
-    copy: :boolean
-  ]
+  def switches,
+    do: [
+      context_app: :string,
+      web: :string,
+      live_form: :boolean,
+      xcodegen: :boolean,
+      copy: :boolean,
+      notify: :boolean
+    ]
 
   def validate_args!([format]), do: [format]
+
   def validate_args!(_args) do
     Mix.raise("""
     mix lvn.swiftui.gen does not take any arguments, only the following switches:
@@ -58,6 +62,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     --no-live-form
     --no-xcodegen
     --no-copy
+    --no-notify
     """)
   end
 
@@ -69,6 +74,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     web_prefix = Mix.Phoenix.web_path(context.context_app)
 
     copy_files? = Keyword.get(context.opts, :copy, true)
+    notify? = Keyword.get(context.opts, :notify, true)
     xcodegen? = Keyword.get(context.opts, :xcodegen, true) && @macos?
 
     components_path = Path.join(web_prefix, "components")
@@ -76,16 +82,28 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     files =
       if xcodegen? do
         Path.wildcard(Path.join([root, "**/*"]))
-        |> Enum.filter(&(!File.dir?(&1)))
-        |> Enum.map(fn(path) ->
+        |> Enum.filter(fn path ->
+          cond do
+            not notify? and
+                String.replace(Path.basename(path), Path.extname(path), "") == "AppDelegate" ->
+              false
+
+            !File.dir?(path) ->
+              true
+
+            true ->
+              false
+          end
+        end)
+        |> Enum.map(fn path ->
           type =
             path
             |> Path.extname()
             |> case do
-            ".swift" -> :eex
-            ".yml" -> :eex
-            _any -> :text
-          end
+              ".swift" -> :eex
+              ".yml" -> :eex
+              _any -> :text
+            end
 
           path = Path.relative_to(path, root)
 
@@ -96,8 +114,15 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
       end
 
     case copy_files? do
-      true -> List.insert_at(files, 0, {:eex, "core_components.ex", Path.join(components_path, "core_components.swiftui.ex")})
-      _ -> files
+      true ->
+        List.insert_at(
+          files,
+          0,
+          {:eex, "core_components.ex", Path.join(components_path, "core_components.swiftui.ex")}
+        )
+
+      _ ->
+        files
     end
   end
 
@@ -111,12 +136,15 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     apps = Mix.Project.deps_apps()
 
     live_form_opt? = Keyword.get(context.opts, :live_form, true)
-    live_form_app? = Enum.member?(apps, :live_view_native_live_form) || Mix.env() == :test # yeah, I know but it's a generator
+    notify? = Keyword.get(context.opts, :notify, true)
+    # yeah, I know but it's a generator
+    live_form_app? = Enum.member?(apps, :live_view_native_live_form) || Mix.env() == :test
 
     binding = [
       context: context,
       assigns: %{
         app_namespace: inspect(context.base_module),
+        notify: notify?,
         test?: false,
         gettext: true,
         version: version,
@@ -138,6 +166,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
     ]
 
     spec_path = Path.join([native_path, "project.yml"])
+
     bin_path =
       :code.priv_dir(:live_view_native_swiftui)
       |> IO.iodata_to_binary()
@@ -153,7 +182,7 @@ defmodule Mix.Tasks.Lvn.Swiftui.Gen do
 
   defp remove_xcodegen_files(%{native_path: native_path} = context) do
     ["base_spec.yml", "project_watchos.yml", "project.yml"]
-    |> Enum.map(&(Path.join([native_path, &1])))
+    |> Enum.map(&Path.join([native_path, &1]))
     |> Enum.map(&File.rm/1)
 
     context
